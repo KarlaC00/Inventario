@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS `Gestor_Inventario`.`Usuario` (
   `Direccion` VARCHAR(100) NOT NULL,
   `Correo` VARCHAR(150) NOT NULL,
   `numeroTelefonico` INT NOT NULL,
-  `TipoIdentificacion` BIT(1) NOT NULL,
+  `TipoIdentificacion` VARCHAR(10) NOT NULL,
   `numeroIdentificacion` VARCHAR(20) NOT NULL,
   `Usuario` VARCHAR(100) NOT NULL,
   `Contrasena` VARCHAR(100) NOT NULL,
@@ -102,7 +102,7 @@ CREATE TABLE IF NOT EXISTS `Gestor_Inventario`.`Proveedor` (
   `Direccion` VARCHAR(100) NOT NULL,
   `Correo` VARCHAR(150) NOT NULL,
   `numeroTelefonico` INT NOT NULL,
-  `TipoIdentificacion` BIT(1) NOT NULL,
+  `TipoIdentificacion` VARCHAR(10) NOT NULL,
   `numeroIdentificacion` VARCHAR(20) NOT NULL,
   `Estado` BIT(1) NOT NULL,
   PRIMARY KEY (`IdProveedor`)
@@ -117,7 +117,7 @@ CREATE TABLE IF NOT EXISTS `Gestor_Inventario`.`Cliente` (
   `Direccion` VARCHAR(100) NOT NULL,
   `Correo` VARCHAR(150) NOT NULL,
   `numeroTelefonico` INT NOT NULL,
-  `TipoIdentificacion` BIT(1) NOT NULL,
+  `TipoIdentificacion` VARCHAR(10) NOT NULL,
   `numeroIdentificacion` VARCHAR(20) NOT NULL,
   `Estado` BIT(1) NOT NULL,
   PRIMARY KEY (`IdCliente`)
