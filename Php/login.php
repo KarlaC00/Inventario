@@ -1,10 +1,9 @@
 <?php
-session_start();
-
+// Verificar si se recibieron datos del formulario de inicio de sesión
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Obtener el correo y la contraseña enviados desde el formulario
-    $email = $_POST["email"];
-    $password = $_POST["password"];
+    $correo = $_POST["correo"];
+    $contrasena = $_POST["contrasena"];
 
     // Conectar a la base de datos (reemplaza las credenciales con las tuyas)
     $host = 'localhost';
@@ -17,29 +16,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         
         // Consulta SQL para verificar si existe un usuario con el correo y la contraseña proporcionados
-        $sql = "SELECT * FROM Usuario WHERE Correo = :email AND Contrasena = :password";
+        $sql = "SELECT * FROM Usuario WHERE Correo = :correo AND Contrasena = :contrasena AND Estado = 1";
         $stmt = $pdo->prepare($sql);
-        $stmt->bindParam(':email', $email);
-        $stmt->bindParam(':password', $password);
+        $stmt->bindParam(':correo', $correo);
+        $stmt->bindParam(':contrasena', $contrasena);
         $stmt->execute();
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        // Verificar si se encontró un usuario con las credenciales proporcionadas
-        if ($user) {
-            // Iniciar sesión y redirigir al usuario a otra página
-            $_SESSION['user_id'] = $user['id']; // Puedes almacenar cualquier dato del usuario que necesites
-            header("Location: .././Html/index.html"); // Reemplaza 'inicio.php' con la página a la que deseas redirigir al usuario
+        $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        if ($usuario) {
+            // Si el usuario existe y está activo, iniciar sesión y redirigir al gestor de inventario
+            session_start();
+            $_SESSION["user_id"] = $usuario["IdUsuario"];
+            header("Location: gestion_inventario.php");
             exit();
         } else {
-            // Credenciales incorrectas, muestra un mensaje de error
-            echo "Correo o contraseña incorrectos";
+            // Si el usuario no existe o no está activo, mostrar un mensaje de error
+            echo "Correo o contraseña incorrectos.";
         }
     } catch(PDOException $e) {
-        // En caso de error en la conexión o en la consulta SQL
+        // En caso de error, mostrar el mensaje de error
         echo "Error: " . $e->getMessage();
     }
-
-    // Cierra la conexión a la base de datos
-    $pdo = null;
 }
 ?>
