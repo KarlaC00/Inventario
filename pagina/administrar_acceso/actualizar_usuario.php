@@ -94,8 +94,7 @@ $rolUsuario = isset($roles[$nivelAcceso]) ? $roles[$nivelAcceso] : "Desconocido"
                         $row = mysqli_fetch_assoc($result);
                 ?>
                         <form action="../../php/administrar_acceso/update_usuario.php" method="POST" id="edit-user-form" class="form-columns">
-                            <!-- Aquí van tus campos de formulario existentes -->
-                            <input type="hidden" name="idUsuario" value="<?php echo $row['IdUsuario']; ?>">
+                            <input type="hidden" name="idUsuario" value="<?php echo $row['idUsuario']; ?>">
                             <div class="input-group">
                                 <label for="nombre">Nombre</label>
                                 <input type="text" id="nombre" name="nombre" value="<?php echo $row['Nombre']; ?>" required>
