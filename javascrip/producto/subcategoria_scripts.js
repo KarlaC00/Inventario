@@ -89,16 +89,16 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (xhr.status === 200) {
                     // Si la eliminación fue exitosa, mostrar un mensaje y recargar las subcategorías
                     alert(xhr.responseText);
-                    loadSubcategories();
+                    loadSubcategories(); // Asumiendo que existe una función loadSubcategories() para recargar la lista de subcategorías
                 } else {
                     console.error('Error al eliminar subcategoría:', xhr.status);
                 }
             }
         };
-        xhr.open('POST', '../../php/producto/delete_subcategoria.php', true);
+        xhr.open('POST', '../../php/producto/delete_subcategoria.php', true); // Ruta al script PHP
         xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-        xhr.send('idSubcategoria=' + subcategoryId);
-    }
+        xhr.send('idSubcategoria=' + subcategoryId); // Nombre del parámetro esperado por el script PHP
+    }    
 
     // Función para mostrar las subcategorías en la tabla
     function displaySubcategories(data) {
@@ -114,8 +114,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 '<td>' + estadoLabel + '</td>' +
                 '<td>' + subcategory.CategoriaNombre + '</td>' +
                 '<td>' +
-                '<button class="delete" data-id="' + subcategory.IdSubcategoria + '">Eliminar</button>' +
-                '<button class="edit" data-id="' + subcategory.IdSubcategoria + '">Editar</button>' +
+                '<button class="delete" data-id="' + subcategory.IdSubcategoria + '"><img src="../../img/svg/delete.svg" alt="Eliminar"></button>' +
+                '<button class="edit" data-id="' + subcategory.IdSubcategoria + '"><img src="../../img/svg/edit.svg" alt="Editar"></button>' +
                 '</td>' +
                 '</tr>';
             subcategoryTableBody.innerHTML += row;

@@ -74,32 +74,64 @@ mysqli_close($conn);
             </div>
         </div>
         <div class="title-section">
-            <img src="../../img/svg/box.svg" alt="Producto" class="title-svg">
-            <span>Agregar Categoria</span>
+    <img src="../../img/svg/box.svg" alt="Producto" class="title-svg">
+    <span>Agregar Subcategoría</span>
+</div>
+<div class="body-content">
+    <div class="container">
+        <div class="add-user">
+            <img src="../../img/svg/add_archive.svg" alt="Agregar Subcategoría">
+            <span class="title">Agregar Subcategoría</span>
         </div>
-        <div class="body-content">
-            <div class="container">
-                <div class="add-user">
-                    <img src="../../img/svg/add_archive.svg" alt="Agregar Producto">
-                    <span class="title">Agregar Categoria</span>
-                </div>
-                <form action="../../php/producto/create_categoria.php" method="POST" class="form-columns">
-                    <input type="hidden" name="idCategoria" value="idCategoria">
-                    <div class="input-group">
-                        <label for="nombre">Nombre:</label>
-                        <input type="text" id="nombre" name="nombre" required><br><br>
+        <form action="../../php/producto/create_subcategoria.php" method="POST" class="form-columns">
+            <div class="input-group">
+                <label for="nombre">Nombre:</label>
+                <input type="text" id="nombre" name="nombre" required><br><br>
+            </div>
+            <div class="input-group">
+                <label for="estado">Estado:</label>
+                <select id="estado" name="estado" required>
+                    <option value="1">Activo</option>
+                    <option value="0">Inactivo</option>
+                </select><br><br>
+            </div>
+            <div class="input-group">
+                <label for="categoria">Categoría:</label>
+                <select id="categoria" name="categoria" required>
+                        <!-- Aquí se deben cargar las categorías existentes -->
+                    <?php
+                        // Código PHP para obtener y mostrar las categorías existentes
+                        $servername = "localhost";
+                        $username = "root";
+                        $password = "";
+                        $dbname = "GestorInventario";
+
+                        // Crear conexión
+                        $conn = new mysqli($servername, $username, $password, $dbname);
+
+                        // Verificar la conexión
+                        if ($conn->connect_error) {
+                            die("Connection failed: " . $conn->connect_error);
+                        }
+
+                        // Consulta para obtener las categorías
+                        $query = "SELECT IdCategoria, Nombre FROM Categoria";
+                        $result = $conn->query($query);
+
+                        // Mostrar las opciones de categorías en el select
+                        while ($row = $result->fetch_assoc()) {
+                            echo '<option value="' . $row["IdCategoria"] . '">' . $row["Nombre"] . '</option>';
+                        }
+
+                        // Cerrar la conexión
+                        $conn->close();
+                    ?>
+                    </select><br><br>
                     </div>
-                    <div class="input-group">
-                        <label for="estado">Estado:</label>
-                        <select id="estado" name="estado" required>
-                            <option value="1">Activo</option>
-                            <option value="0">Inactivo</option>
-                        </select><br><br>
-                    </div>
-                    <button type="submit">Guardar Cambios</button>
+                    <button type="submit">Guardar Subcategoría</button>
                 </form>
             </div>
-        </div>
+        </div>  
     </div>
 </body>
 
