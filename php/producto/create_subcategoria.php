@@ -6,11 +6,13 @@ $password = "";
 $dbname = "gestorinventario";
 
 // Verificar si se recibieron los datos del formulario
-if (isset($_POST['nombre']) && isset($_POST['estado']) && isset($_POST['categoria'])) {
+if (isset($_POST['nombre']) && isset($_POST['categoria'])) {
     // Recibir y sanitizar datos del formulario
     $nombre = htmlspecialchars($_POST['nombre']);
-    $estado = $_POST['estado'];
     $categoriaId = intval($_POST['categoria']); // Convertir a entero
+
+    // Establecer el valor por defecto de estado como 1 si no se proporciona
+    $estado = isset($_POST['estado']) ? $_POST['estado'] : 1;
 
     // Conectar a la base de datos
     $conn = mysqli_connect($servername, $username, $password, $dbname);
@@ -20,7 +22,7 @@ if (isset($_POST['nombre']) && isset($_POST['estado']) && isset($_POST['categori
         die("Connection failed: " . mysqli_connect_error());
     }
 
-    // Query SQL para insertar la subcategoría
+    // Query SQL para insertar la subcategoría usando un prepared statement
     $query = "INSERT INTO Subcategoria (Nombre, Estado, Categoria_IdCategoria) VALUES (?, ?, ?)";
     
     // Preparar la consulta SQL usando un prepared statement

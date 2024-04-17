@@ -89,13 +89,6 @@ mysqli_close($conn);
                 <input type="text" id="nombre" name="nombre" required><br><br>
             </div>
             <div class="input-group">
-                <label for="estado">Estado:</label>
-                <select id="estado" name="estado" required>
-                    <option value="1">Activo</option>
-                    <option value="0">Inactivo</option>
-                </select><br><br>
-            </div>
-            <div class="input-group">
                 <label for="categoria">Categoría:</label>
                 <select id="categoria" name="categoria" required>
                         <!-- Aquí se deben cargar las categorías existentes -->

@@ -89,13 +89,6 @@ mysqli_close($conn);
                         <label for="nombre">Nombre:</label>
                         <input type="text" id="nombre" name="nombre" required><br><br>
                     </div>
-                    <div class="input-group">
-                        <label for="estado">Estado:</label>
-                        <select id="estado" name="estado" required>
-                            <option value="1">Activo</option>
-                            <option value="0">Inactivo</option>
-                        </select><br><br>
-                    </div>
                     <button type="submit">Guardar Cambios</button>
                 </form>
             </div>

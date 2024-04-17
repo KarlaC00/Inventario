@@ -6,7 +6,9 @@ $dbname = "gestorinventario";
 
 // Recibir datos del formulario
 $nombre = $_POST['nombre'];
-$estado = $_POST['estado'];
+
+// Definir estado por defecto
+$estado = isset($_POST['estado']) ? $_POST['estado'] : 1;
 
 // Conectar a la base de datos
 $conn = mysqli_connect($servername, $username, $password, $dbname);
@@ -16,7 +18,7 @@ if (!$conn) {
     die("Connection failed: " . mysqli_connect_error());
 }
 
-// Query SQL para insertar la categoría
+// Preparar consulta SQL para insertar la categoría
 $query = "INSERT INTO Categoria (Nombre, Estado) VALUES ('$nombre', '$estado')";
 
 // Ejecutar la consulta
