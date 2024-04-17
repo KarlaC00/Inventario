@@ -28,7 +28,7 @@ $rolUsuario = isset($roles[$nivelAcceso]) ? $roles[$nivelAcceso] : "Desconocido"
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestión de Inventario</title>
-    <link rel="stylesheet" href="../../css/producto/categoria_styles.css">
+    <link rel="stylesheet" href="../../css/producto/subcategoria_styles.css">
 </head>
 
 <body>
@@ -57,30 +57,30 @@ $rolUsuario = isset($roles[$nivelAcceso]) ? $roles[$nivelAcceso] : "Desconocido"
         </div>
         <div class="title-section">
         <img src="../../img/svg/box.svg" alt="Productos" class="title-svg">
-            <span>Categorías</span>
+        <span>Subcategorías</span>
+    </div>
+    <div class="body-content">
+        <div id="search-container">
+            <input type="text" id="search-input" placeholder="Buscar subcategorías...">
+            <button id="search-button">Buscar</button>
         </div>
-        <div class="body-content">
-            <div id="search-container">
-                <input type="text" id="search-input" placeholder="Buscar categorías...">
-                <button id="search-button">Buscar</button>
-            </div>
-            <div id="action-buttons">
-                <button id="delete-button">Eliminar categoría</button>
-                <button id="add-button">Agregar categoría</button>
-            </div>
-            <table id="category-table">
-                <thead>
-                    <tr>
-                        <th>Id Categoría</th>
-                        <th>Nombre</th>
-                        <th>Estado</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody id="category-table-body"></tbody>
-            </table>
+        <div id="action-buttons">
+            <button id="delete-button">Eliminar subcategoría</button>
+            <button id="add-button">Agregar subcategoría</button>
         </div>
-        </div>
-        <script src="../../javascrip/producto/categoria_scripts.js"></script>
-    </body>
-    </html>
+        <table id="subcategory-table">
+            <thead>
+                <tr>
+                    <th>Id Subcategoría</th>
+                    <th>Nombre</th>
+                    <th>Estado</th>
+                    <th>Categoría</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="subcategory-table-body"></tbody>
+        </table>
+    </div>
+    <script src="../../javascrip/producto/subcategoria_scripts.js"></script>
+</body>
+</html>

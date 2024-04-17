@@ -19,6 +19,24 @@ $nivelAcceso = isset($_SESSION['nivelAcceso_IdnivelAcceso']) ? $_SESSION['nivelA
 
 // Determinar el rol del usuario
 $rolUsuario = isset($roles[$nivelAcceso]) ? $roles[$nivelAcceso] : "Desconocido";
+
+// Conexión a la base de datos
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "gestorinventario";
+
+$conn = mysqli_connect($servername, $username, $password, $dbname);
+if (!$conn) {
+    die("Connection failed: " . mysqli_connect_error());
+}
+
+// Consultar las categorías disponibles
+$query_categorias = "SELECT * FROM Categoria";
+$result_categorias = mysqli_query($conn, $query_categorias);
+$categorias = mysqli_fetch_all($result_categorias, MYSQLI_ASSOC);
+mysqli_free_result($result_categorias);
+mysqli_close($conn);
 ?>
 
 <!DOCTYPE html>
@@ -28,7 +46,7 @@ $rolUsuario = isset($roles[$nivelAcceso]) ? $roles[$nivelAcceso] : "Desconocido"
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestión de Inventario</title>
-    <link rel="stylesheet" href="../../css/producto/categoria_styles.css">
+    <link rel="stylesheet" href="../../css/producto/agregar_categoria_styles.css">
 </head>
 
 <body>
@@ -56,31 +74,33 @@ $rolUsuario = isset($roles[$nivelAcceso]) ? $roles[$nivelAcceso] : "Desconocido"
             </div>
         </div>
         <div class="title-section">
-        <img src="../../img/svg/box.svg" alt="Productos" class="title-svg">
-            <span>Categorías</span>
+            <img src="../../img/svg/box.svg" alt="Producto" class="title-svg">
+            <span>Agregar Producto</span>
         </div>
         <div class="body-content">
-            <div id="search-container">
-                <input type="text" id="search-input" placeholder="Buscar categorías...">
-                <button id="search-button">Buscar</button>
+            <div class="container">
+                <div class="add-user">
+                    <img src="../../img/svg/add_archive.svg" alt="Agregar Producto">
+                    <span class="title">Agregar Producto</span>
+                </div>
+                <form action="../../php/producto/create_categoria.php" method="POST" class="form-columns">
+                    <input type="hidden" name="idCategoria" value="idCategoria">
+                    <div class="input-group">
+                        <label for="nombre">Nombre:</label>
+                        <input type="text" id="nombre" name="nombre" required><br><br>
+                    </div>
+                    <div class="input-group">
+                        <label for="estado">Estado:</label>
+                        <select id="estado" name="estado" required>
+                            <option value="1">Activo</option>
+                            <option value="0">Inactivo</option>
+                        </select><br><br>
+                    </div>
+                    <button type="submit">Guardar Cambios</button>
+                </form>
             </div>
-            <div id="action-buttons">
-                <button id="delete-button">Eliminar categoría</button>
-                <button id="add-button">Agregar categoría</button>
-            </div>
-            <table id="category-table">
-                <thead>
-                    <tr>
-                        <th>Id Categoría</th>
-                        <th>Nombre</th>
-                        <th>Estado</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody id="category-table-body"></tbody>
-            </table>
         </div>
-        </div>
-        <script src="../../javascrip/producto/categoria_scripts.js"></script>
-    </body>
-    </html>
+    </div>
+</body>
+
+</html>

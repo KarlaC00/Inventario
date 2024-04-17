@@ -14,8 +14,18 @@ document.addEventListener("DOMContentLoaded", function () {
         searchProducts();
     });
 
+    // Función para eliminar producto al hacer clic en el botón de eliminar
     document.getElementById('delete-button').addEventListener('click', function () {
-        window.location.href = '../../pagina/producto/categoria.php';
+        var selectedRow = document.querySelector('#product-table-body tr.selected');
+        if (selectedRow) {
+            var selectedProductId = selectedRow.getAttribute('data-id');
+            var confirmation = confirm('¿Estás seguro de eliminar este producto?');
+            if (confirmation) {
+                deleteProduct(selectedProductId);
+            }
+        } else {
+            alert('Por favor, selecciona un producto para eliminar.');
+        }
     });
 
     // Función para redireccionar a la página de agregar producto al hacer clic en el botón de agregar producto
@@ -29,6 +39,16 @@ document.addEventListener("DOMContentLoaded", function () {
             var selectedProductId = event.target.parentElement.parentElement.getAttribute('data-id');
             window.location.href = '../../pagina/producto/actualizar_producto.php?id=' + selectedProductId;
         }
+    });
+
+    // Función para redireccionar a la página de agregar categoria al hacer clic en el botón de agregar categoria
+    document.getElementById('add-categoria').addEventListener('click', function () {
+        window.location.href = '../../pagina/producto/categoria.php';
+    });
+
+    // Función para redireccionar a la página de agregar subcategoria al hacer clic en el botón de agregar subcategoria
+    document.getElementById('add-subcategoria').addEventListener('click', function () {
+        window.location.href = '../../pagina/producto/subcategoria.php';
     });
 
     // Función para cargar productos desde la base de datos y mostrarlos en la tabla
@@ -92,18 +112,19 @@ document.addEventListener("DOMContentLoaded", function () {
     function displayProducts(data) {
         var productTableBody = document.getElementById('product-table-body');
         productTableBody.innerHTML = '';
-    
+
         data.forEach(function (product) {
+            var estadoButton = product.Estado == 1 ? '<button class="active">Activo</button>' : '<button class="inactive">Inactivo</button>';
             var row = '<tr data-id="' + product.IdProducto + '">' +
                 '<td>' + product.IdProducto + '</td>' +
                 '<td>' + product.Nombre + '</td>' +
                 '<td>' + (product.Descripcion || '') + '</td>' +
-                '<td><img src="' + (product.Imagen || '../../img/placeholder.jpg') + '" alt="Imagen de Producto" style="width: 50px;"></td>' +
+                '<td><img src="data:image/jpeg;base64,' + product.Imagen + '" alt="Imagen de Producto" style="width: 100px;"></td>' +
                 '<td>' + product.Precio + '</td>' +
                 '<td>' + product.CantidadDisponible + '</td>' +
-                '<td>' + (product.Estado ? 'Activo' : 'Inactivo') + '</td>' +
-                '<td>' + product.Categoria + '</td>' +  // Mostrar la categoría
-                '<td>' + product.Subcategoria + '</td>' +  // Mostrar la subcategoría
+                '<td>' + estadoButton + '</td>' +
+                '<td>' + product.Categoria + '</td>' +
+                '<td>' + product.Subcategoria + '</td>' +
                 '<td>' +
                 '<button class="delete" data-id="' + product.IdProducto + '"><img src="../../img/svg/delete.svg" alt="Eliminar"></button>' +
                 '<button class="edit"><img src="../../img/svg/edit.svg" alt="Editar"></button>' +
@@ -112,7 +133,6 @@ document.addEventListener("DOMContentLoaded", function () {
             productTableBody.innerHTML += row;
         });
     }
-    
 
     // Evento de clic en el botón de eliminar dentro de la tabla
     document.getElementById('product-table-body').addEventListener('click', function (event) {

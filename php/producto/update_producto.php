@@ -1,70 +1,66 @@
 <?php
+// Verificar si se recibieron los datos del formulario
+if (!isset($_POST['idProducto'], $_POST['nombre'], $_POST['descripcion'], $_POST['precio'], $_POST['cantidad_disponible'], $_POST['estado'], $_POST['subcategoria_id'], $_POST['categoria_id'])) {
+    echo "Error: Se deben proporcionar todos los datos del producto.";
+    exit();
+}
+
 $servername = "localhost";
 $username = "root";
 $password = "";
 $dbname = "gestorinventario";
 
-// Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
+// Crear conexión
+$conn = mysqli_connect($servername, $username, $password, $dbname);
 
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+// Verificar la conexión
+if (!$conn) {
+    die("Connection failed: " . mysqli_connect_error());
 }
 
-// Check if form data is received
-if (
-    isset($_POST['IdProducto']) &&
-    isset($_POST['nombre']) &&
-    isset($_POST['descripcion']) &&
-    isset($_POST['imagen']) &&
-    isset($_POST['precio']) &&
-    isset($_POST['cantidad_disponible']) &&
-    isset($_POST['subcategoria_id']) &&
-    isset($_POST['estado'])
-) {
-    // Recibir datos del formulario de edición
-    $idProducto = $_POST['IdProducto'];
-    $nombre = $_POST['nombre'];
-    $descripcion = $_POST['descripcion'];
-    $imagen = $_POST['imagen'];
-    $precio = $_POST['precio'];
-    $cantidadDisponible = $_POST['cantidad_disponible'];
-    $subcategoriaId = $_POST['subcategoria_id'];
-    $estado = $_POST['estado'];
+// Recibir datos del formulario y evitar inyección de SQL
+$idProducto = mysqli_real_escape_string($conn, $_POST['idProducto']);
+$nombre = mysqli_real_escape_string($conn, $_POST['nombre']);
+$descripcion = mysqli_real_escape_string($conn, $_POST['descripcion']);
+$precio = floatval($_POST['precio']);
+$cantidad_disponible = intval($_POST['cantidad_disponible']);
+$estado = intval($_POST['estado']);
+$subcategoria_id = intval($_POST['subcategoria_id']);
+$categoria_id = intval($_POST['categoria_id']);
 
-    // Convertir el estado de cadena a entero (opcional)
-    $estado = intval($estado);
-
-    // Prepare SQL statement using a prepared statement
-    $stmt = $conn->prepare("UPDATE Producto SET 
-                                Nombre=?, 
-                                Descripcion=?, 
-                                Imagen=?, 
-                                Precio=?, 
-                                CantidadDisponible=?, 
-                                Estado=?, 
-                                Subcategoria_IdSubcategoria=?
-                            WHERE IdProducto=?");
-
-    // Bind parameters to the prepared statement
-    $stmt->bind_param("sssiisi", $nombre, $descripcion, $imagen, $precio, $cantidadDisponible, $estado, $subcategoriaId, $idProducto);
-
-    // Execute the prepared statement
-    if ($stmt->execute()) {
-        echo "Producto actualizado correctamente.";
-    } else {
-        echo "Error al actualizar el producto: " . $stmt->error;
-    }
-
-    // Close the prepared statement
-    $stmt->close();
+// Procesar imagen si se proporcionó
+if (isset($_FILES['imagen']) && $_FILES['imagen']['error'] === UPLOAD_ERR_OK) {
+    $imagen = $_FILES['imagen']['tmp_name'];
+    $imagenData = addslashes(file_get_contents($imagen));
 } else {
-    echo "Error: Datos del formulario incompletos.";
+    $imagenData = null;
 }
 
-// Close the database connection
-$conn->close();
+// Query SQL para actualizar el producto
+$query = "UPDATE Producto SET 
+            Nombre='$nombre', 
+            Descripcion='$descripcion', 
+            Precio=$precio, 
+            CantidadDisponible=$cantidad_disponible, 
+            Estado=$estado, 
+            Subcategoria_IdSubcategoria=$subcategoria_id";
+
+// Agregar la actualización de la imagen si se proporcionó
+if ($imagenData !== null) {
+    $query .= ", Imagen='$imagenData'";
+}
+
+$query .= " WHERE IdProducto=$idProducto";
+
+// Ejecutar la consulta
+if (mysqli_query($conn, $query)) {
+    echo "Producto actualizado correctamente.";
+} else {
+    echo "Error al actualizar el producto: " . mysqli_error($conn);
+}
+
+// Cerrar la conexión a la base de datos
+mysqli_close($conn);
 
 // Redireccionar a index.php después de procesar el formulario
 header("Location: ../../pagina/producto/producto.php");

@@ -41,7 +41,7 @@ $rolUsuario = isset($roles[$nivelAcceso]) ? $roles[$nivelAcceso] : "Desconocido"
                 </div>
                 <div class="user-details">
                     <span style="font-size: 16px; font-weight: bold; margin-bottom: 2px;"><?php echo $_SESSION['usuario']; ?></span>
-                    <!-- Puedes mantener la visualización del rol del usuario si lo deseas -->
+                    <span style="font-size: 12px;"><?php echo $rolUsuario; ?></span>
                 </div>
                 <div class="dropdown-menu-container">
                     <div class="dropdown-toggle">
@@ -52,7 +52,6 @@ $rolUsuario = isset($roles[$nivelAcceso]) ? $roles[$nivelAcceso] : "Desconocido"
                         <a href="../../logout.php">Cerrar sesión</a>
                         <a href="#">Ver usuario</a>
                     </div>
-                    
                 </div>
             </div>
         </div>
@@ -66,8 +65,10 @@ $rolUsuario = isset($roles[$nivelAcceso]) ? $roles[$nivelAcceso] : "Desconocido"
                 <button id="search-button">Buscar</button>
             </div>
             <div id="action-buttons">
-                <button id="delete-button">Agregar Categoria</button>
+                <button id="delete-button">Eliminar producto</button>
                 <button id="add-button">Agregar producto</button>
+                <button id="add-categoria">Categoría</button>
+                <button id="add-subcategoria">Subcategoría</button>
             </div>
             <table id="product-table">
                 <thead>

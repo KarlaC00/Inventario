@@ -79,7 +79,7 @@ CREATE TABLE IF NOT EXISTS `GestorInventario`.`Producto` (
   `IdProducto` INT NOT NULL AUTO_INCREMENT,
   `Nombre` VARCHAR(150) NOT NULL,
   `Descripcion` VARCHAR(500) NULL,
-  `Imagen` VARCHAR(100) NULL,
+  `Imagen` LONGBLOB NULL,
   `Precio` DECIMAL(10,2) NOT NULL,
   `CantidadDisponible` INT NOT NULL,
   `Estado` BIT(1) NOT NULL,

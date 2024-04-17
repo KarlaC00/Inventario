@@ -4,10 +4,10 @@ $username = "root";
 $password = "";
 $dbname = "gestorinventario";
 
-// Create connection
+// Crear conexión
 $conn = mysqli_connect($servername, $username, $password, $dbname);
 
-// Check connection
+// Verificar conexión
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
@@ -22,6 +22,8 @@ $result = mysqli_query($conn, $query);
 $productos = array();
 
 while ($row = mysqli_fetch_assoc($result)) {
+    // Convertir el campo de imagen a una cadena base64
+    $row['Imagen'] = base64_encode($row['Imagen']);
     $productos[] = $row;
 }
 

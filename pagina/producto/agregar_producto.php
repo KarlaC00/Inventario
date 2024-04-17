@@ -19,6 +19,24 @@ $nivelAcceso = isset($_SESSION['nivelAcceso_IdnivelAcceso']) ? $_SESSION['nivelA
 
 // Determinar el rol del usuario
 $rolUsuario = isset($roles[$nivelAcceso]) ? $roles[$nivelAcceso] : "Desconocido";
+
+// Conexión a la base de datos
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "gestorinventario";
+
+$conn = mysqli_connect($servername, $username, $password, $dbname);
+if (!$conn) {
+    die("Connection failed: " . mysqli_connect_error());
+}
+
+// Consultar las categorías disponibles
+$query_categorias = "SELECT * FROM Categoria";
+$result_categorias = mysqli_query($conn, $query_categorias);
+$categorias = mysqli_fetch_all($result_categorias, MYSQLI_ASSOC);
+mysqli_free_result($result_categorias);
+mysqli_close($conn);
 ?>
 
 <!DOCTYPE html>
@@ -41,7 +59,7 @@ $rolUsuario = isset($roles[$nivelAcceso]) ? $roles[$nivelAcceso] : "Desconocido"
                 </div>
                 <div class="user-details">
                     <span style="font-size: 16px; font-weight: bold; margin-bottom: 2px;"><?php echo $_SESSION['usuario']; ?></span>
-                    <!-- Puedes mantener la visualización del rol del usuario si lo deseas -->
+                    <span style="font-size: 12px;"><?php echo $rolUsuario; ?></span>
                 </div>
                 <div class="dropdown-menu-container">
                     <div class="dropdown-toggle">
@@ -50,6 +68,7 @@ $rolUsuario = isset($roles[$nivelAcceso]) ? $roles[$nivelAcceso] : "Desconocido"
                     </div>
                     <div class="menu-content">
                         <a href="../../logout.php">Cerrar sesión</a>
+                        <a href="#">Ver usuario</a>
                     </div>
                 </div>
             </div>
@@ -64,18 +83,10 @@ $rolUsuario = isset($roles[$nivelAcceso]) ? $roles[$nivelAcceso] : "Desconocido"
                     <img src="../../img/svg/add_archive.svg" alt="Agregar Producto">
                     <span class="title">Agregar Producto</span>
                 </div>
-                <form action="../../php/producto/create_producto.php" method="POST" class="form-columns">
+                <form action="../../php/producto/create_producto.php" method="POST" enctype="multipart/form-data" class="form-columns">
                     <div class="input-group">
                         <label for="nombre">Nombre</label>
                         <input type="text" id="nombre" name="nombre" required>
-                    </div>
-                    <div class="input-group">
-                        <label for="descripcion">Descripción</label>
-                        <textarea id="descripcion" name="descripcion" rows="4" required></textarea>
-                    </div>
-                    <div class="input-group">
-                        <label for="imagen">Imagen</label>
-                        <input type="text" id="imagen" name="imagen" required>
                     </div>
                     <div class="input-group">
                         <label for="precio">Precio</label>
@@ -86,15 +97,62 @@ $rolUsuario = isset($roles[$nivelAcceso]) ? $roles[$nivelAcceso] : "Desconocido"
                         <input type="number" id="cantidad_disponible" name="cantidad_disponible" required>
                     </div>
                     <div class="input-group">
-                        <label for="subcategoria">Subcategoría</label>
-                        <input type="text" id="subcategoria" name="subcategoria" required>
+                        <label for="imagen">Imagen</label>
+                        <input type="file" id="imagen" name="imagen" required accept="image/*">
                     </div>
-                    <div></div>
+                    <div class="input-group">
+                        <label for="categoria_id">Categoría</label>
+                        <select id="categoria_id" name="categoria_id" required>
+                            <?php foreach ($categorias as $categoria) : ?>
+                                <option value="<?php echo $categoria['IdCategoria']; ?>"><?php echo $categoria['Nombre']; ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="input-group" id="subcategoria_group">
+                        <label for="subcategoria_id">Subcategoría</label>
+                        <select id="subcategoria_id" name="subcategoria_id" required>
+                            <!-- Las opciones de subcategoría se cargarán dinámicamente mediante JavaScript -->
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="descripcion">Descripción</label>
+                        <textarea id="descripcion" name="descripcion" rows="4" required></textarea>
+                    </div>
                     <button type="submit">Agregar</button>
                 </form>
             </div>
         </div>
     </div>
+    <script>
+        // Función para cargar las subcategorías correspondientes a la categoría seleccionada
+        document.getElementById('categoria_id').addEventListener('change', function() {
+            var categoriaId = this.value;
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', '../../php/producto/get_subcategorias.php?categoria_id=' + categoriaId, true);
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    var subcategorias = JSON.parse(xhr.responseText);
+                    var subcategoriaSelect = document.getElementById('subcategoria_id');
+                    subcategoriaSelect.innerHTML = ''; // Limpiar las opciones existentes
+                    subcategorias.forEach(function(subcategoria) {
+                        var option = document.createElement('option');
+                        option.text = subcategoria.Nombre;
+                        option.value = subcategoria.IdSubcategoria;
+                        subcategoriaSelect.add(option);
+                    });
+
+                    // Seleccionar una subcategoría por defecto si hay al menos una disponible
+                    if (subcategorias.length > 0) {
+                        subcategoriaSelect.selectedIndex = 0;
+                    }
+                }
+            };
+            xhr.send();
+        });
+
+        // Llamar manualmente al evento change para que se carguen las subcategorías al cargar la página
+        document.getElementById('categoria_id').dispatchEvent(new Event('change'));
+    </script>
 </body>
 
 </html>
