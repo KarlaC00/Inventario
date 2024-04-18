@@ -1,0 +1,84 @@
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.search-bar {
+    margin-bottom: 20px;
+}
+
+.search-bar input[type="text"] {
+    width: calc(100% - 32px);
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.user-actions {
+    margin-bottom: 20px;
+}
+
+.user-actions button {
+    padding: 10px 20px;
+    margin-right: 10px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.user-actions button:hover {
+    background-color: #0056b3;
+}
+
+#providerList {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#providerList th, #providerList td {
+    padding: 10px;
+    border: 1px solid #ccc;
+}
+
+#providerList th {
+    background-color: #f2f2f2;
+    text-align: left;
+}
+
+.status-btn {
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.active {
+    background-color: green;
+    color: #fff;
+}
+
+.inactive {
+    background-color: red;
+    color: #fff;
+}
+
+.status-btn:hover {
+    opacity: 0.8;
+}
+
+.edit-btn, .delete-btn {
+    padding: 5px 10px;
+    margin-right: 5px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.edit-btn:hover, .delete-btn:hover {
+    background-color: #0056b3;
+}

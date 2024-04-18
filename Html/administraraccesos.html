@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Usuarios</title>
+    <link rel="stylesheet" href="../Css/administraraccesosstyles.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Gestión de Usuarios</h2>
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="Buscar usuarios...">
+            <img src="../images/search.svg" alt="Buscar">
+        </div>
+        <h3>Lista de Usuarios</h3>
+        <div class="user-actions">
+            <button id="deleteUserBtn">Eliminar Usuario</button>
+            <button id="addUserBtn" onclick="window.location.href='./agregarusuario.html';">Agregar Usuario</button>
+        </div>
+        <table id="userList">
+            <thead>
+                <tr>
+                    <th>Código</th>
+                    <th>Nombre</th>
+                    <th>Dirección</th>
+                    <th>Correo</th>
+                    <th>Número Telefónico</th>
+                    <th>Tipo de Identificación</th>
+                    <th>Número de Identificación</th>
+                    <th>Usuario</th>
+                    <th>Contraseña</th>
+                    <th>Nivel de Acceso</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Aquí se cargarán dinámicamente los usuarios -->
+            </tbody>
+        </table>
+    </div>
+    <script src="../JavaScript/administraraccesosscripts.js"></script>
+</body>
+</html>
