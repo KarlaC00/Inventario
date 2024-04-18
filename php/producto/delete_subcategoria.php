@@ -1,5 +1,5 @@
 <?php
-// Verificar si se recibió el ID de la categoría a eliminar
+// Verificar si se recibió el ID de la subcategoría a eliminar
 if (isset($_POST['idSubcategoria'])) {
     // Obtener y sanear el ID de la subcategoría
     $idSubcategoria = intval($_POST['idSubcategoria']); // Convertir a entero para mayor seguridad
@@ -10,31 +10,46 @@ if (isset($_POST['idSubcategoria'])) {
     $password = "";
     $dbname = "gestorinventario";
 
-    // Crear conexión
-    $conn = mysqli_connect($servername, $username, $password, $dbname);
+    // Crear conexión usando objetos mysqli (más seguro)
+    $conn = new mysqli($servername, $username, $password, $dbname);
 
     // Verificar la conexión
-    if (!$conn) {
-        die("Connection failed: " . mysqli_connect_error());
+    if ($conn->connect_error) {
+        die("Connection failed: " . $conn->connect_error);
     }
 
-    // Preparar la consulta SQL usando un prepared statement
-    $query = "DELETE FROM subcategoria WHERE IdSubcategoria = ?";
+    // Verificar si hay productos asociados a esta subcategoría
+    $query_count_products = "SELECT COUNT(*) AS numProductos FROM Producto WHERE Subcategoria_IdSubcategoria = ?";
+    $stmt_count = $conn->prepare($query_count_products);
+    $stmt_count->bind_param("i", $idSubcategoria);
+    $stmt_count->execute();
+    $stmt_count->bind_result($numProductos);
+    $stmt_count->fetch();
+    $stmt_count->close();
 
-    $stmt = mysqli_prepare($conn, $query);
-    mysqli_stmt_bind_param($stmt, "i", $idSubcategoria);
-    
-    // Ejecutar la consulta
-    if (mysqli_stmt_execute($stmt)) {
-        echo "Subcategoria eliminada correctamente.";
+    // Verificar si se puede eliminar la subcategoría
+    if ($numProductos > 0) {
+        echo "No se puede eliminar la subcategoría porque tiene productos asociados.";
     } else {
-        echo "Error al eliminar la Subcategoria: " . mysqli_error($conn);
+        // Preparar la consulta SQL para eliminar la subcategoría
+        $query_delete = "DELETE FROM Subcategoria WHERE IdSubcategoria = ?";
+        $stmt_delete = $conn->prepare($query_delete);
+        $stmt_delete->bind_param("i", $idSubcategoria);
+
+        // Ejecutar la consulta para eliminar la subcategoría
+        if ($stmt_delete->execute()) {
+            echo "Subcategoría eliminada correctamente.";
+        } else {
+            echo "Error al eliminar la subcategoría: " . $stmt_delete->error;
+        }
+
+        // Cerrar el statement de eliminación
+        $stmt_delete->close();
     }
 
-    // Cerrar el statement y la conexión
-    mysqli_stmt_close($stmt);
-    mysqli_close($conn);
+    // Cerrar la conexión
+    $conn->close();
 } else {
-    echo "ID de Subcategoria no recibido.";
+    echo "ID de subcategoría no recibido.";
 }
 ?>
