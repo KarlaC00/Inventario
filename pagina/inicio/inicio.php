@@ -48,7 +48,7 @@ $rolUsuario = isset($roles[$nivelAcceso]) ? $roles[$nivelAcceso] : "Desconocido"
                     </div>
                     <div class="menu-content">
                         <a href="../../logout.php">Cerrar sesión</a>
-                        <a href="#">Ver usuario</a>
+                        <a href="../../pagina/inicio/ver_usuario.php">Ver usuario</a>
                     </div>
                 </div>
             </div>
