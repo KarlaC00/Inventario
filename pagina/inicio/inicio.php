@@ -44,19 +44,20 @@ if ($conn->connect_error) {
     die("Conexión fallida: " . $conn->connect_error);
 }
 
-// Consulta para obtener todos los productos y su cantidad disponible
-$sql = "SELECT Nombre, CantidadDisponible FROM Producto";
+$sql = "SELECT Nombre, CantidadDisponible, Precio FROM Producto ORDER BY CantidadDisponible DESC LIMIT 20";
 $result = $conn->query($sql);
 
-// Array para almacenar nombres de productos y cantidades disponibles
+// Arrays para almacenar nombres de productos, cantidades disponibles y precios
 $productNames = [];
 $productQuantities = [];
+$productPrices = [];
 
 if ($result->num_rows > 0) {
     // Almacenar datos en arrays
     while ($row = $result->fetch_assoc()) {
         $productNames[] = $row['Nombre'];
         $productQuantities[] = $row['CantidadDisponible'];
+        $productPrices[] = $row['Precio'];
     }
 }
 
@@ -74,7 +75,7 @@ $conn->close();
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.css">
 </head>
 <body>
-        <?php include '../../sidebar.php'; ?>
+<?php include '../../sidebar.php'; ?>
         <div class="content">
             <div class="header">
                 <div class="user-info">
@@ -92,7 +93,7 @@ $conn->close();
                         </div>
                         <div class="menu-content">
                             <a href="../../logout.php">Cerrar sesión</a>
-                            <a href="#">Ver usuario</a>
+                            <a href="../../pagina/inicio/ver_usuario.php">Ver usuario</a>
                         </div>
                     </div>
                 </div>
@@ -134,6 +135,12 @@ $conn->close();
                         data: <?php echo json_encode($productQuantities); ?>,
                         backgroundColor: 'rgba(75, 192, 192, 0.2)',
                         borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }, {
+                        label: 'Precio',
+                        data: <?php echo json_encode($productPrices); ?>,
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
                         borderWidth: 1
                     }]
                 },
