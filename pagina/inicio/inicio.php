@@ -32,7 +32,7 @@ $password = "";
 $database = "GestorInventario";
 
 // Obtener los totales de precios
-$precioTotalProductos = getTotalProductPrice($servername, $username, $password, $database);
+$precioTotalProductos = getTotalProductCost($servername, $username, $password, $database);
 $precioTotalSalidas = getTotalSalidaPrice($servername, $username, $password, $database);
 $precioTotalEntradas = getTotalEntradaPrice($servername, $username, $password, $database);
 
@@ -44,22 +44,37 @@ if ($conn->connect_error) {
     die("Conexión fallida: " . $conn->connect_error);
 }
 
-$sql = "SELECT Nombre, CantidadDisponible, Precio FROM Producto ORDER BY CantidadDisponible DESC LIMIT 20";
-$result = $conn->query($sql);
+$sqlCantidad = "SELECT Nombre, CantidadDisponible FROM Producto ORDER BY CantidadDisponible DESC LIMIT 10";
+$resultCantidad = $conn->query($sqlCantidad);
 
-// Arrays para almacenar nombres de productos, cantidades disponibles y precios
-$productNames = [];
+$sqlPrecio = "SELECT Nombre, (Precio * CantidadDisponible) AS PrecioTotal FROM Producto ORDER BY PrecioTotal DESC LIMIT 10";
+$resultPrecio = $conn->query($sqlPrecio);
+
+$productNamesCantidad = [];
 $productQuantities = [];
+$productNamesPrecio = [];
 $productPrices = [];
 
-if ($result->num_rows > 0) {
-    // Almacenar datos en arrays
-    while ($row = $result->fetch_assoc()) {
-        $productNames[] = $row['Nombre'];
+if ($resultCantidad->num_rows > 0) {
+    while ($row = $resultCantidad->fetch_assoc()) {
+        $productNamesCantidad[] = $row['Nombre'];
         $productQuantities[] = $row['CantidadDisponible'];
-        $productPrices[] = $row['Precio'];
     }
 }
+
+if ($resultPrecio->num_rows > 0) {
+    while ($row = $resultPrecio->fetch_assoc()) {
+        $productNamesPrecio[] = $row['Nombre'];
+        $productPrices[] = $row['PrecioTotal'];
+    }
+}
+
+// Asegurar que los arrays tengan la misma longitud
+$maxProducts = max(count($productNamesCantidad), count($productNamesPrecio));
+$productNamesCantidad = array_pad($productNamesCantidad, $maxProducts, '');
+$productQuantities = array_pad($productQuantities, $maxProducts, 0);
+$productNamesPrecio = array_pad($productNamesPrecio, $maxProducts, '');
+$productPrices = array_pad($productPrices, $maxProducts, 0);
 
 // Cerrar conexión
 $conn->close();
@@ -76,83 +91,135 @@ $conn->close();
 </head>
 <body>
 <?php include '../../sidebar.php'; ?>
-        <div class="content">
-            <div class="header">
-                <div class="user-info">
-                    <div class="user-icon">
-                        <img src="../../img/svg/icon.svg" alt="Usuario">
-                    </div>
-                    <div class="user-details">
-                        <span style="font-size: 16px; font-weight: bold; margin-bottom: 2px;"><?php echo $_SESSION['usuario']; ?></span>
-                        <span style="font-size: 12px;"><?php echo $rolUsuario; ?></span>
-                    </div>
-                    <div class="dropdown-menu-container">
-                        <div class="dropdown-toggle">
-                            <img src="../../img/svg/option.svg" alt="Opciones">
-                            <span>Opciones</span>
-                        </div>
-                        <div class="menu-content">
-                            <a href="../../logout.php">Cerrar sesión</a>
-                            <a href="../../pagina/inicio/ver_usuario.php">Ver usuario</a>
-                        </div>
-                    </div>
-                </div>
+
+<div class="content">
+    <div class="header">
+        <div class="user-info">
+            <div class="user-icon">
+                <img src="../../img/svg/icon.svg" alt="Usuario">
             </div>
-        <div class="container">
-            <div class="title-section">
-                <div class="info-item">
-                    <img src="../../img/svg/producto.svg" alt="Imagen 1" class="title-svg">
-                    <p>Valor neto inventario <br> $<?php echo number_format($precioTotalProductos, 2); ?></p>
+            <div class="user-details">
+                <span style="font-size: 16px; font-weight: bold; margin-bottom: 2px;"><?php echo $_SESSION['usuario']; ?></span>
+                <span style="font-size: 12px;"><?php echo $rolUsuario; ?></span>
+            </div>
+            <div class="dropdown-menu-container">
+                <div class="dropdown-toggle">
+                    <img src="../../img/svg/option.svg" alt="Opciones">
+                    <span>Opciones</span>
                 </div>
-                <div class="info-item">
-                    <img src="../../img/svg/venta.svg" alt="Imagen 2" class="title-svg">
-                    <p>Ventas <br> $<?php echo number_format($precioTotalSalidas, 2); ?></p>
-                </div>
-                <div class="info-item">
-                    <img src="../../img/svg/compra.svg" alt="Imagen 3" class="title-svg">
-                    <p>Compras <br> $<?php echo number_format($precioTotalEntradas, 2); ?></p>
+                <div class="menu-content">
+                    <a href="../../logout.php">Cerrar sesión</a>
+                    <a href="../../pagina/inicio/ver_usuario.php">Ver usuario</a>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="body-content">
-        <canvas id="productoChart" width="800" height="400"></canvas>
+    <div class="title-section">
+        <img src="../../img/svg/house.svg" alt="Administrar acceso" class="title-svg">
+        <span>Inicio</span>
+    </div>
+</div>
+
+<div class="body-content">
+    <div class="cards">
+        <div class="info-item">
+            <img src="../../img/svg/producto.svg" alt="Imagen 1" class="title-svg-1">
+            <p>$<?php echo number_format($precioTotalProductos, 2); ?> <br> <span>Valor neto inventario</span></p>
+        </div>
+        <div class="info-item">
+            <img src="../../img/svg/venta.svg" alt="Imagen 2" class="title-svg-1">
+            <p>$<?php echo number_format($precioTotalSalidas, 2); ?> <br> <span> Ventas totales </span></p>
+        </div>
+        <div class="info-item">
+            <img src="../../img/svg/compra.svg" alt="Imagen 3" class="title-svg-1">
+            <p>$<?php echo number_format($precioTotalEntradas, 2); ?> <br> <span> Compras totales </span></p>
+        </div>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <div class="grafico">
+        <div class="container">
+            <span>Productos con mas cantidad </span>
+            <canvas id="cantidadChart" width="800" height="400"></canvas>
+        </div>
 
-    <script>
-        $(document).ready(function(){
-            var ctx = document.getElementById('productoChart').getContext('2d');
-            var myChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: <?php echo json_encode($productNames); ?>,
-                    datasets: [{
-                        label: 'Cantidad Disponible',
-                        data: <?php echo json_encode($productQuantities); ?>,
-                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                        borderColor: 'rgba(75, 192, 192, 1)',
-                        borderWidth: 1
-                    }, {
-                        label: 'Precio',
-                        data: <?php echo json_encode($productPrices); ?>,
-                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                        borderColor: 'rgba(255, 99, 132, 1)',
-                        borderWidth: 1
-                    }]
+        <div class="container">
+            <span>Precios más altos de productos </span>
+            <canvas id="totalChart" width="800" height="400"></canvas>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+
+<script>
+    $(document).ready(function(){
+        var ctxCantidad = document.getElementById('cantidadChart').getContext('2d');
+        var chartCantidad = new Chart(ctxCantidad, {
+            type: 'bar',
+            data: {
+                labels: <?php echo json_encode($productNamesCantidad); ?>,
+                datasets: [{
+                    label: 'Cantidad Disponible',
+                    data: <?php echo json_encode($productQuantities); ?>,
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        var ctxTotal = document.getElementById('totalChart').getContext('2d');
+        var totalChart = new Chart(ctxTotal, {
+            type: 'bar',
+            data: {
+                labels: <?php echo json_encode($productNamesPrecio); ?>,
+                datasets: [{
+                    label: 'Total por Producto',
+                    data: <?php echo json_encode($productPrices); ?>,
+                    backgroundColor: 'rgba(128, 0, 128, 0.2)', 
+                    borderColor: 'rgba(128, 0, 128, 1)', 
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value, index, values) {
+                                return '$' + value.toFixed(2);
+                            }
+                        }
+                    }
                 },
-                options: {
-                    scales: {
-                        y: {
-                            beginAtZero: true
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                var label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed.y !== null) {
+                                    label += '$' + context.parsed.y.toFixed(2);
+                                }
+                                return label;
+                            }
                         }
                     }
                 }
-            });
+            }
         });
-    </script>
+    });
+</script>
 </body>
 </html>

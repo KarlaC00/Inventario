@@ -1,0 +1,137 @@
+* {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+/* Estilos del navbar */
+.sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 250px;
+    background-color: #1a1434;
+    color: #ffffff;
+    font-family: Arial, sans-serif;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.logo {
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center; /* Centra verticalmente los elementos */
+}
+
+.logo img {
+    width: 80px;
+    height: 80px;
+    margin-right: 5px; /* Espaciado entre el logo y el texto */
+}
+
+.logo-content {
+    display: flex;
+    flex-direction: column; /* Alinea los elementos en columna */
+}
+
+.logo span {
+    font-size: 24px; /* Tamaño del texto */
+    font-weight: bold; /* Negrita */
+}
+
+.menu {
+    list-style-type: none;
+    padding: 10px;
+}
+
+.menu li {
+    margin-bottom: 20px;
+}
+
+.menu a {
+    color: #8f8f8f;
+    font-size: 18px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    position: relative; /* Permite posicionar el indicador */
+    transition: color 0.5s; /* Agrega transición para el color */
+}
+
+.menu a img {
+    width: 35px;
+    height: 35px;
+    margin-right: 10px;
+    /* Estilos adicionales para los iconos */
+}
+
+.menu a:hover {
+    color: #ffffff; /* Cambia el color al hacer hover */
+}
+
+.menu a img {
+    transition: filter 0.5s; /* Agrega una transición de 0.5 segundos */
+}
+
+.menu a:hover img {
+    filter: brightness(0) invert(1); /* Cambia el color de la imagen a blanco (#ffffff) */
+}
+
+/* Estilos para los elementos desplegables */
+.dropdown ul {
+    max-height: 0;
+    overflow: hidden;
+    padding-left: 50px;
+    list-style-type: none; /* Eliminar los puntos de la lista */
+    transition: max-height 0.5s; /* Agregar transición para la altura máxima */
+}
+
+.dropdown.active ul {
+    max-height: 200px; /* Altura máxima para el menú desplegado */
+}
+
+.dropdown .arrow {
+    transition: transform 0.3s ease; /* Agregar transición suave a la rotación */
+}
+
+.dropdown.active .arrow {
+    transform: rotate(180deg); /* Rotar el SVG 180 grados al hacer hover */
+}
+
+.dropdown ul li {
+    margin: 15px 0px;
+    color: #8f8f8f;
+}
+
+/* Estilos para el indicador de sección activa */
+.indicator {
+    display: none; /* Oculta el indicador por defecto */
+    position: absolute;
+    left: -30px; /* Posiciona el indicador a la izquierda del texto */
+    top: 50%;
+    transform: translateY(-50%);
+    width: 6px;
+    height: 100%;
+    background-color: #ffffff; /* Color del indicador */
+}
+
+/* Estilos adicionales para la opción de menú activa */
+.menu li.active .indicator {
+    display: block; /* Muestra el indicador solo cuando el elemento li tiene la clase active */
+}
+
+.menu a img.white-color,
+.menu li.active a img {
+    filter: brightness(0) invert(1); /* Cambia el color de la imagen a blanco (#ffffff) */
+}
+
+/* Cuando la clase 'active' está presente en un 'li', cambia el color del texto a blanco */
+.menu li.active > a {
+    color: #ffffff;
+}
+
+/* Cuando la clase 'active' está presente en un 'ul', cambia el color del texto a #8f8f8f */
+.menu ul.active a {
+    color: #8f8f8f;
+}
