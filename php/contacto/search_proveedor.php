@@ -1,43 +1,78 @@
 <?php
+// Datos de conexión a la base de datos
 $servername = "localhost";
 $username = "root";
 $password = "";
 $dbname = "gestorinventario";
 
-// Create connection
-$conn = mysqli_connect($servername, $username, $password, $dbname);
+// Crear la conexión
+$conn = new mysqli($servername, $username, $password, $dbname);
 
-// Check connection
+// Verifica la conexión
 if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+    die("Conexión fallida: " . $conn->connect_error);
 }
 
-// Verifica si se ha enviado un término de búsqueda
-if(isset($_GET['search'])) {
-    $searchTerm = $_GET['search'];
+// Verifica si se ha proporcionado un término de búsqueda
+$searchTerm = isset($_GET['search']) ? trim((string) $_GET['search']) : null;
 
-    // Prepara la consulta SQL para buscar proveedores por múltiples campos
-    $query = "SELECT * FROM Proveedor
-              WHERE Nombre LIKE '%$searchTerm%'
-              OR Correo LIKE '%$searchTerm%'
-              OR Direccion LIKE '%$searchTerm%'
-              OR numeroTelefonico LIKE '%$searchTerm%'
-              OR TipoIdentificacion LIKE '%$searchTerm%'
-              OR numeroIdentificacion LIKE '%$searchTerm%'";
+// Asegurarse de que el término de búsqueda no sea nulo
+if ($searchTerm !== null) {
+    // Prepara la consulta SQL para buscar proveedores por múltiples campos usando LIKE
+    $query = "
+        SELECT 
+            *
+        FROM 
+            Proveedor
+        WHERE 
+            Nombre LIKE ?
+            OR Correo LIKE ?
+            OR Direccion LIKE ?
+            OR numeroTelefonico LIKE ?
+            OR numeroIdentificacion LIKE ?
+    ";
 
-    $result = mysqli_query($conn, $query);
+    // Prepara la consulta
+    $stmt = $conn->prepare($query);
 
-    if($result) {
-        $proveedores = array();
-        // Recorre los resultados y los almacena en un array
-        while ($row = mysqli_fetch_assoc($result)) {
-            $proveedores[] = $row;
+    if ($stmt) {
+        // Configurar el patrón de búsqueda
+        $searchPattern = '%' . $searchTerm . '%';
+
+        // Vincular parámetros
+        $stmt->bind_param('sssss', 
+            $searchPattern, 
+            $searchPattern, 
+            $searchPattern, 
+            $searchPattern, 
+            $searchPattern
+        );
+
+        // Ejecutar la consulta
+        $stmt->execute();
+
+        // Obtener resultados
+        $result = $stmt->get_result();
+
+        if ($result) {
+            $proveedores = array();
+            // Recorre los resultados y almacena en un array
+            while ($row = $result->fetch_assoc()) {
+                $proveedores[] = $row;
+            }
+
+            // Devuelve los resultados en formato JSON
+            echo json_encode($proveedores);
+        } else {
+            // Si no se obtienen resultados
+            echo json_encode(array('error' => 'No se encontraron resultados'));
         }
-        // Devuelve los proveedores encontrados en formato JSON
-        echo json_encode($proveedores);
+
+        // Cierra la declaración
+        $stmt->close();
     } else {
-        // Si ocurre un error en la consulta
-        echo json_encode(array('error' => 'Error al ejecutar la consulta: ' . mysqli_error($conn)));
+        // Si la preparación de la consulta falla
+        echo json_encode(array('error' => 'Error al preparar la consulta'));
     }
 } else {
     // Si no se proporciona un término de búsqueda
@@ -45,5 +80,5 @@ if(isset($_GET['search'])) {
 }
 
 // Cierra la conexión
-mysqli_close($conn);
+$conn->close();
 ?>

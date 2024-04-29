@@ -1,68 +1,90 @@
 <?php
-// Configuración de la base de datos
-$servername = "localhost"; // Cambia si es necesario
-$username = "root"; // Cambia si es necesario
-$password = ""; // Cambia si es necesario
-$dbname = "gestorinventario"; // Cambia si es necesario
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "gestorinventario";
 
-// Crear conexión
-$conn = mysqli_connect($servername, $username, $password, $dbname);
+// Crear la conexión
+$conn = new mysqli($servername, $username, $password, $dbname);
 
-// Verificar conexión
-if (mysqli_connect_errno()) {
-    die("Error de conexión: " . mysqli_connect_error());
+// Verificar la conexión
+if ($conn->connect_error) {
+    die("Conexión fallida: " . $conn->connect_error);
 }
 
 // Verifica si se ha enviado un término de búsqueda
-if (isset($_GET['search'])) {
-    $searchTerm = $_GET['search'];
+$searchTerm = isset($_GET['search']) ? trim((string)$_GET['search']) : null;
 
-    // Consulta SQL segura con sentencias preparadas
-    $query = "SELECT s.IdSalida, s.FechaSalida, c.Nombre AS ClienteNombre, u.Usuario AS UsuarioNombre,
-                    (SELECT COUNT(*) 
-                     FROM DetalleSalida
-                     WHERE Salida_IdSalida = s.IdSalida) AS Productos,
-                    (SELECT SUM(PrecioSalida) 
-                     FROM DetalleSalida 
-                     WHERE Salida_IdSalida = s.IdSalida) AS PrecioTotal
-              FROM Salida s
-              INNER JOIN Cliente c ON s.Cliente_IdCliente = c.IdCliente
-              INNER JOIN Usuario u ON s.Usuario_IdUsuario = u.IdUsuario
-              WHERE s.FechaSalida LIKE ?
-              OR c.Nombre LIKE ?
-              OR u.Usuario LIKE ?";
+if ($searchTerm !== null) {
+    // Prepara la consulta SQL para buscar salidas por múltiples campos
+    $query = "
+        SELECT 
+            s.IdSalida, 
+            s.FechaSalida, 
+            c.Nombre AS ClienteNombre, 
+            u.Usuario AS UsuarioNombre,
+            (SELECT SUM(Cantidad)
+             FROM DetalleSalida 
+             WHERE Salida_IdSalida = s.IdSalida) AS Productos,
+            (SELECT SUM(PrecioSalida) 
+             FROM DetalleSalida 
+             WHERE Salida_IdSalida = s.IdSalida) AS PrecioTotal
+        FROM 
+            Salida s
+        INNER JOIN 
+            Cliente c ON s.Cliente_IdCliente = c.IdCliente
+        INNER JOIN 
+            Usuario u ON s.Usuario_IdUsuario = u.IdUsuario
+        WHERE 
+            s.FechaSalida LIKE ?
+            OR c.Nombre LIKE ?
+            OR u.Usuario LIKE ?
+    ";
 
-    $stmt = mysqli_prepare($conn, $query);
-    $searchPattern = '%' . $searchTerm . '%';
+    // Prepara la consulta
+    $stmt = $conn->prepare($query);
 
-    mysqli_stmt_bind_param($stmt, 'sss', $searchPattern, $searchPattern, $searchPattern);
-    
-    mysqli_stmt_execute($stmt);
-    $result = mysqli_stmt_get_result($stmt);
+    if ($stmt) {
+        // Configurar el patrón de búsqueda
+        $searchPattern = '%' . $searchTerm . '%';
 
-    // Verifica el resultado de la consulta
-    if ($result) {
-        $ventas = array();
-        // Recorre los resultados y los almacena en un array
-        while ($row = mysqli_fetch_assoc($result)) {
-            $ventas[] = $row;
+        // Vincular parámetros
+        $stmt->bind_param('sss', 
+            $searchPattern, 
+            $searchPattern, 
+            $searchPattern
+        );
+
+        // Ejecutar la consulta
+        $stmt->execute();
+
+        // Obtener resultados
+        $result = $stmt->get_result();
+
+        if ($result) {
+            $ventas = array();
+            // Recorre los resultados y almacena en un array
+            while ($row = $result->fetch_assoc()) {
+                $ventas[] = $row;
+            }
+            // Devuelve las salidas encontradas en formato JSON
+            echo json_encode($ventas);
+        } else {
+            // Si ocurre un error en la consulta
+            echo json_encode(array('error' => 'Error al ejecutar la consulta'));
         }
-        
-        // Establece el encabezado para indicar respuesta JSON
-        header('Content-Type: application/json');
-        // Devuelve las salidas encontradas en formato JSON
-        echo json_encode($ventas);
+
+        // Cierra la declaración
+        $stmt->close();
     } else {
-        // Si ocurre un error en la consulta
-        header('Content-Type: application/json');
-        echo json_encode(array('error' => 'Error al ejecutar la consulta'));
+        // Si la preparación de la consulta falla
+        echo json_encode(array('error' => 'Error al preparar la consulta'));
     }
 } else {
     // Si no se proporciona un término de búsqueda
-    header('Content-Type: application/json');
     echo json_encode(array('error' => 'No se proporcionó un término de búsqueda'));
 }
 
-// Cerrar la conexión
-mysqli_close($conn);
+// Cierra la conexión
+$conn->close();
 ?>

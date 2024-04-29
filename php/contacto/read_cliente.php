@@ -4,10 +4,10 @@ $username = "root";
 $password = "";
 $dbname = "gestorinventario";
 
-// Create connection
+// Crea la conexion
 $conn = mysqli_connect($servername, $username, $password, $dbname);
 
-// Check connection
+// Comprueba la conexion
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }

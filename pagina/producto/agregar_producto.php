@@ -20,6 +20,12 @@ $nivelAcceso = isset($_SESSION['nivelAcceso_IdnivelAcceso']) ? $_SESSION['nivelA
 // Determinar el rol del usuario
 $rolUsuario = isset($roles[$nivelAcceso]) ? $roles[$nivelAcceso] : "Desconocido";
 
+// Redirigir si el usuario no tiene permiso de escritura
+if ($rolUsuario !== "Escritura") {
+    header("Location: ../../pagina/producto/producto.php");
+    exit();
+}
+
 // Conexión a la base de datos
 $servername = "localhost";
 $username = "root";
@@ -68,7 +74,7 @@ mysqli_close($conn);
                     </div>
                     <div class="menu-content">
                         <a href="../../logout.php">Cerrar sesión</a>
-                        <a href="#">Ver usuario</a>
+                        <a href="../../pagina/inicio/ver_usuario.php">Ver usuario</a>
                     </div>
                 </div>
             </div>

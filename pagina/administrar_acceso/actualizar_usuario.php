@@ -14,11 +14,20 @@ $roles = [
     2 => "Lectura"
 ];
 
+// Obtener el id del usuario desde la sesión
+$IdSesion = $_SESSION['IdUsuario'];
+
 // Obtener el nivel de acceso del usuario desde la sesión
 $nivelAcceso = isset($_SESSION['nivelAcceso_IdnivelAcceso']) ? $_SESSION['nivelAcceso_IdnivelAcceso'] : null;
 
 // Determinar el rol del usuario
 $rolUsuario = isset($roles[$nivelAcceso]) ? $roles[$nivelAcceso] : "Desconocido";
+
+// Redirigir si el usuario no tiene permiso de escritura
+if ($rolUsuario !== "Escritura") {
+    header("Location: ../../pagina/administrar_acceso/usuario.php");
+    exit();
+}
 ?>
 
 <!DOCTYPE html>
@@ -50,7 +59,7 @@ $rolUsuario = isset($roles[$nivelAcceso]) ? $roles[$nivelAcceso] : "Desconocido"
                     </div>
                     <div class="menu-content">
                         <a href="../../logout.php">Cerrar sesión</a>
-                        <a href="#">Ver usuario</a>
+                        <a href="../../pagina/inicio/ver_usuario.php">Ver usuario</a>
                     </div>
                 </div>
             </div>
@@ -73,11 +82,10 @@ $rolUsuario = isset($roles[$nivelAcceso]) ? $roles[$nivelAcceso] : "Desconocido"
                     $password = "";
                     $dbname = "gestorinventario";
 
-                    // Create connection
+                    // Crea la conexion
                     $conn = mysqli_connect($servername, $username, $password, $dbname);
-                    //$conectar    = mysqli_connect($servidor, $usuario, $clave, $datos);
 
-                    // Check connection
+                    // Comprueba la conexion
                     if ($conn->connect_error) {
                         die("Connection failed: " . $conn->connect_error);
                     }
@@ -94,7 +102,6 @@ $rolUsuario = isset($roles[$nivelAcceso]) ? $roles[$nivelAcceso] : "Desconocido"
                         $row = mysqli_fetch_assoc($result);
                 ?>
                         <form action="../../php/administrar_acceso/update_usuario.php" method="POST" id="edit-user-form" class="form-columns">
-                            <!-- Aquí van tus campos de formulario existentes -->
                             <input type="hidden" name="idUsuario" value="<?php echo $row['IdUsuario']; ?>">
                             <div class="input-group">
                                 <label for="nombre">Nombre</label>
@@ -154,10 +161,18 @@ $rolUsuario = isset($roles[$nivelAcceso]) ? $roles[$nivelAcceso] : "Desconocido"
                             </div>
                             <div class="input-group">
                                 <label for="estado">Estado:</label>
-                                <select id="estado" name="estado" required>
-                                    <option value="1" <?php if ($row['Estado'] == 1) echo 'selected'; ?>>Activo</option>
-                                    <option value="0" <?php if ($row['Estado'] == 0) echo 'selected'; ?>>Inactivo</option>
-                                </select>
+                                <?php if ($IdSesion == $idUsuario) { ?>
+                                    <select id="estado" name="estado" disabled>
+                                        <option value="1" <?php if ($row['Estado'] == 1) echo 'selected'; ?>>Activo</option>
+                                        <option value="0" <?php if ($row['Estado'] == 0) echo 'selected'; ?>>Inactivo</option>
+                                    </select>
+                                    <input type="hidden" name="estado" value="<?php echo $row['Estado']; ?>">
+                                <?php } else { ?>
+                                    <select id="estado" name="estado" required>
+                                        <option value="1" <?php if ($row['Estado'] == 1) echo 'selected'; ?>>Activo</option>
+                                        <option value="0" <?php if ($row['Estado'] == 0) echo 'selected'; ?>>Inactivo</option>
+                                    </select>
+                                <?php } ?>
                             </div>
                             <button type="submit">Actualizar</button>
                         </form>

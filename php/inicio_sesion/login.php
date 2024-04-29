@@ -26,6 +26,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // Las credenciales son válidas y el usuario está activo
             $_SESSION['loggedin'] = true;
             $_SESSION['usuario'] = $usuario;
+            $_SESSION['IdUsuario'] = $row['IdUsuario']; // Almacenar el id del usuario en la sesión
             $_SESSION['nivelAcceso_IdnivelAcceso'] = $row['nivelAcceso_IdnivelAcceso']; // Almacenar el nivel de acceso en la sesión
             header("Location: ../../Pagina/inicio/inicio.php");
             exit();

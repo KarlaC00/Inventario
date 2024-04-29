@@ -88,7 +88,7 @@ $conn->close();
     <?php include '../../sidebar.php'; ?>
     <div class="content">
         <div class="header">
-            <div class="user-info">
+            <div class="user-info" data-rol-usuario="<?php echo $rolUsuario; ?>">
                 <div class="user-icon">
                     <img src="../../img/svg/icon.svg" alt="Usuario">
                 </div>
@@ -103,7 +103,7 @@ $conn->close();
                     </div>
                     <div class="menu-content">
                         <a href="../../logout.php">Cerrar sesión</a>
-                        <a href="#">Ver usuario</a>
+                        <a href="../../pagina/inicio/ver_usuario.php">Ver usuario</a>
                     </div>
                 </div>
             </div>
@@ -142,8 +142,13 @@ $conn->close();
     </div>
 
     <script>
+        var rolUsuario = document.querySelector('.user-info').getAttribute('data-rol-usuario'); // Obtener el rol del usuario
         // Redirigir a la página para agregar una nueva salida
         document.getElementById('add-button').addEventListener('click', function() {
+            if (rolUsuario !== "Escritura") {
+                alert("No tienes permiso para eliminar usuarios.");
+                return;
+            }
             window.location.href = '../../pagina/venta/agregar_venta.php';
         });
 
@@ -213,6 +218,11 @@ $conn->close();
             if (event.keyCode === 13) { // Buscar al presionar Enter
                 searchVentas();
             }
+        });
+
+        // Evento para búsqueda en tiempo real al escribir en el campo de búsqueda
+        document.getElementById('search-input').addEventListener('input', function() {
+            searchVentas(); // Llamar a la función de búsqueda cuando se escribe
         });
 
         // Al cargar la página, mostrar todos los detalles para el `IdSalida`

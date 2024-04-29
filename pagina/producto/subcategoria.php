@@ -35,7 +35,7 @@ $rolUsuario = isset($roles[$nivelAcceso]) ? $roles[$nivelAcceso] : "Desconocido"
     <?php include '../../sidebar.php'; ?>
     <div class="content">
         <div class="header">
-            <div class="user-info">
+            <div class="user-info" data-rol-usuario="<?php echo $rolUsuario; ?>">
                 <div class="user-icon">
                     <img src="../../img/svg/icon.svg" alt="Usuario">
                 </div>
@@ -50,7 +50,7 @@ $rolUsuario = isset($roles[$nivelAcceso]) ? $roles[$nivelAcceso] : "Desconocido"
                     </div>
                     <div class="menu-content">
                         <a href="../../logout.php">Cerrar sesión</a>
-                        <a href="#">Ver usuario</a>
+                        <a href="../../pagina/inicio/ver_usuario.php">Ver usuario</a>
                     </div>
                 </div>
             </div>

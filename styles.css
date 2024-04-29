@@ -41,7 +41,7 @@ body {
     padding: 10px;
     border: 1px solid #8863f1;
     border-radius: 5px;
-    box-sizing: border-box; /* Esta línea se añade */
+    box-sizing: border-box;
 }
 
 button {

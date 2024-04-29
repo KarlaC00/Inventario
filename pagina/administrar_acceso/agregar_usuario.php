@@ -19,6 +19,12 @@ $nivelAcceso = isset($_SESSION['nivelAcceso_IdnivelAcceso']) ? $_SESSION['nivelA
 
 // Determinar el rol del usuario
 $rolUsuario = isset($roles[$nivelAcceso]) ? $roles[$nivelAcceso] : "Desconocido";
+
+// Redirigir si el usuario no tiene permiso de escritura
+if ($rolUsuario !== "Escritura") {
+    header("Location: ../../pagina/administrar_acceso/usuario.php");
+    exit();
+}
 ?>
 
 <!DOCTYPE html>
@@ -50,7 +56,7 @@ $rolUsuario = isset($roles[$nivelAcceso]) ? $roles[$nivelAcceso] : "Desconocido"
                     </div>
                     <div class="menu-content">
                         <a href="../../logout.php">Cerrar sesión</a>
-                        <a href="#">Ver usuario</a>
+                        <a href="../../pagina/inicio/ver_usuario.php">Ver usuario</a>
                     </div>
                 </div>
             </div>
@@ -66,7 +72,6 @@ $rolUsuario = isset($roles[$nivelAcceso]) ? $roles[$nivelAcceso] : "Desconocido"
                     <span class="title">Agregar Usuario</span>
                 </div>
                 <form action="../../php/administrar_acceso/create_usuario.php" method="POST" class="form-columns">
-                    <!-- Aquí van tus campos de formulario existentes -->
                     <div class="input-group">
                         <label for="nombre">Nombre</label>
                         <input type="text" id="nombre" name="nombre" required>

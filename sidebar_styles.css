@@ -4,7 +4,6 @@
     font-family: Arial, sans-serif;
 }
 
-/* Estilos del navbar */
 .sidebar {
     position: fixed;
     left: 0;
@@ -21,23 +20,23 @@
 .logo {
     margin-bottom: 20px;
     display: flex;
-    align-items: center; /* Centra verticalmente los elementos */
+    align-items: center;
 }
 
 .logo img {
     width: 80px;
     height: 80px;
-    margin-right: 5px; /* Espaciado entre el logo y el texto */
+    margin-right: 5px;
 }
 
 .logo-content {
     display: flex;
-    flex-direction: column; /* Alinea los elementos en columna */
+    flex-direction: column;
 }
 
 .logo span {
-    font-size: 24px; /* Tamaño del texto */
-    font-weight: bold; /* Negrita */
+    font-size: 24px;
+    font-weight: bold;
 }
 
 .menu {
@@ -55,27 +54,26 @@
     text-decoration: none;
     display: flex;
     align-items: center;
-    position: relative; /* Permite posicionar el indicador */
-    transition: color 0.5s; /* Agrega transición para el color */
+    position: relative;
+    transition: color 0.5s;
 }
 
 .menu a img {
     width: 35px;
     height: 35px;
     margin-right: 10px;
-    /* Estilos adicionales para los iconos */
 }
 
 .menu a:hover {
-    color: #ffffff; /* Cambia el color al hacer hover */
+    color: #ffffff;
 }
 
 .menu a img {
-    transition: filter 0.5s; /* Agrega una transición de 0.5 segundos */
+    transition: filter 0.5s;
 }
 
 .menu a:hover img {
-    filter: brightness(0) invert(1); /* Cambia el color de la imagen a blanco (#ffffff) */
+    filter: brightness(0) invert(1);
 }
 
 /* Estilos para los elementos desplegables */
@@ -83,20 +81,20 @@
     max-height: 0;
     overflow: hidden;
     padding-left: 50px;
-    list-style-type: none; /* Eliminar los puntos de la lista */
-    transition: max-height 0.5s; /* Agregar transición para la altura máxima */
+    list-style-type: none;
+    transition: max-height 0.5s;
 }
 
 .dropdown.active ul {
-    max-height: 200px; /* Altura máxima para el menú desplegado */
+    max-height: 200px;
 }
 
 .dropdown .arrow {
-    transition: transform 0.3s ease; /* Agregar transición suave a la rotación */
+    transition: transform 0.3s ease;
 }
 
 .dropdown.active .arrow {
-    transform: rotate(180deg); /* Rotar el SVG 180 grados al hacer hover */
+    transform: rotate(180deg);
 }
 
 .dropdown ul li {
@@ -106,24 +104,24 @@
 
 /* Estilos para el indicador de sección activa */
 .indicator {
-    display: none; /* Oculta el indicador por defecto */
+    display: none;
     position: absolute;
-    left: -30px; /* Posiciona el indicador a la izquierda del texto */
+    left: -30px;
     top: 50%;
     transform: translateY(-50%);
     width: 6px;
     height: 100%;
-    background-color: #ffffff; /* Color del indicador */
+    background-color: #ffffff;
 }
 
 /* Estilos adicionales para la opción de menú activa */
 .menu li.active .indicator {
-    display: block; /* Muestra el indicador solo cuando el elemento li tiene la clase active */
+    display: block;
 }
 
 .menu a img.white-color,
 .menu li.active a img {
-    filter: brightness(0) invert(1); /* Cambia el color de la imagen a blanco (#ffffff) */
+    filter: brightness(0) invert(1);
 }
 
 /* Cuando la clase 'active' está presente en un 'li', cambia el color del texto a blanco */

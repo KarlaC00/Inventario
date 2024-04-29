@@ -23,7 +23,7 @@ if (!$entradaId) {
 // Verifica si se ha proporcionado un término de búsqueda
 $searchTerm = isset($_GET['search']) ? trim($_GET['search']) : '';
 
-// Consulta SQL que busca solo detalles de compra asociados al `IdEntrada`
+// Consulta SQL que busca solo detalles de entrada asociados al `IdEntrada`
 $query = "
     SELECT 
         d.IdDetalleEntrada,

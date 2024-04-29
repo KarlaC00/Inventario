@@ -19,8 +19,8 @@ if (!$conn) {
     die("Connection failed: " . mysqli_connect_error());
 }
 
-// Obtener el ID del usuario que ha iniciado sesión
-$usuario_IdUsuario = $_SESSION['loggedin'];
+// Obtener el id del usuario desde la sesión
+$usuario_IdUsuario = $_SESSION['IdUsuario'];
 
 // Recibir datos del formulario
 $fecha_entrada = $_POST['fecha_entrada'];
